@@ -147,6 +147,9 @@ void simulate(const std::filesystem::path& path) {
                     comp.session_start = event_time;
                     club.available_comps--;
                     club.users[next_username] = comp_id;
+
+                    buffer << event_time << ' ' << client_from_queue_start_id << ' ' 
+                           << next_username << ' ' << comp_id << '\n';
                 }
             }
 
@@ -164,11 +167,11 @@ void simulate(const std::filesystem::path& path) {
         comp.total_money += calc_session_cost(session_duration, club.price);
     }
 
+    buffer << club.close << '\n';
     for (size_t i = 0; i < club.comps.size(); ++i) {
         buffer << i + 1 << ' ' << club.comps[i].total_money << ' ' << club.comps[i].total_time << '\n';
     }
 
-    buffer << club.close << '\n';
     std::cout << buffer.str();
 }
 

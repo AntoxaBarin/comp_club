@@ -53,4 +53,8 @@ TEST_F(TestClub, QueueTest) {
     runTest(4);
 }
 
+TEST_F(TestClub, TaskExampleInputTest) {
+    runTest(5);
+}
+
 } // namespace test

@@ -23,6 +23,7 @@ constexpr Id client_wait_id = 3;
 constexpr Id client_out_id = 4;
 
 constexpr Id client_out_generated_id = 11;
+constexpr Id client_from_queue_start_id = 12;
 constexpr Id error_id = 13;
 
 struct Comp {
