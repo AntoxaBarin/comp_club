@@ -56,8 +56,7 @@ void simulate(const std::filesystem::path& path) {
             
             ss >> event_time >> event_id >> username;
             
-            bool is_valid_username = validate_username(username);
-            if (!is_valid_username) {
+            if (bool is_valid_name = validate_username(username); !is_valid_name) {
                 std::cout << line << std::endl;
                 return;
             }
@@ -92,19 +91,9 @@ void simulate(const std::filesystem::path& path) {
 
                     // if user change his comp, make prev comp available
                     if (auto prev_comp_id = club.users[username]; prev_comp_id != -1) {
-                        Comp& comp = club.comps[prev_comp_id - 1];
-                        comp.available = true;
-                        club.available_comps++;
-        
-                        Time session_duration = event_time - comp.session_start;
-                        comp.total_time += session_duration;
-                        comp.total_money += calc_session_cost(session_duration, club.price);    
+                        club.release_computer(prev_comp_id, event_time);    
                     }
-
-                    club.comps[comp_id - 1].available = false;
-                    club.comps[comp_id - 1].session_start = event_time;
-                    club.available_comps--;
-                    club.users[username] = comp_id;
+                    club.acquire_computer(comp_id, username, event_time);
                 }
             }
             else if (event_id == client_wait_id) { 
@@ -130,23 +119,13 @@ void simulate(const std::filesystem::path& path) {
                     buffer << event_time << ' ' << error_id << " ClientUnknown\n";
                     continue;
                 }
-                Comp& comp = club.comps[comp_id - 1];
-                comp.available = true;
-                club.available_comps++;
+                club.release_computer(comp_id, event_time);
                 club.users.erase(username);
 
-                auto session_duration = event_time - comp.session_start;
-                comp.total_time += session_duration;
-                comp.total_money += calc_session_cost(session_duration, club.price);
-                 
                 if (!club.waiting_users.empty()) {
                     auto next_username = club.waiting_users.front();
                     club.waiting_users.pop();
-
-                    comp.available = false;
-                    comp.session_start = event_time;
-                    club.available_comps--;
-                    club.users[next_username] = comp_id;
+                    club.acquire_computer(comp_id, next_username, event_time);
 
                     buffer << event_time << ' ' << client_from_queue_start_id << ' ' 
                            << next_username << ' ' << comp_id << '\n';
@@ -197,6 +176,24 @@ bool validate_username(std::string_view username) {
         }
     }
     return true;
+}
+
+void Club::release_computer(int comp_id, const Time& time) {
+    Comp& comp = comps[comp_id - 1];
+    comp.available = true;
+    available_comps++;
+
+    Time session_duration = time - comp.session_start;
+    comp.total_time += session_duration;
+    comp.total_money += calc_session_cost(session_duration, price);
+}
+
+void Club::acquire_computer(int comp_id, const std::string& username, const Time& time) {
+    Comp& comp = comps[comp_id - 1];    
+    comp.available = false;
+    comp.session_start = time;
+    available_comps--;
+    users[username] = comp_id;
 }
 
 } // namespace comp_club

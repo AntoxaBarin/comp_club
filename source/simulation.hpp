@@ -37,6 +37,8 @@ class Club {
 public:    
     Club() = default;
 
+    void acquire_computer(int comp_id, const std::string& username, const Time& time);
+    void release_computer(int comp_id, const Time& time);
     // void handle_client_in(const Time& event_time, std::stringstream& out_buffer);
 
     int comp_number;
