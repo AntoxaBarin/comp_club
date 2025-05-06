@@ -22,19 +22,31 @@ static std::string readFileToString(const std::string& filePath) {
     return buffer.str();
 }
 
-
-TEST_F(TestClub, UserLeavingAtClosingTest) {
+static void runTest(int test_num) {
     std::streambuf* oldCoutBuffer = std::cout.rdbuf();
     std::stringstream capturedOutput;
     std::cout.rdbuf(capturedOutput.rdbuf());
 
-    const std::string input_file_path = "../test/test_data/test_1_input.txt";
-    const std::string expected_file_path = "../test/test_data/test_1_expected.txt"; 
+    const std::string input_file_path = "../test/test_data/test_" + std::to_string(test_num) + "_input.txt";
+    const std::string expected_file_path = "../test/test_data/test_" + std::to_string(test_num) + "_expected.txt"; 
 
     comp_club::simulate(input_file_path);
 
     std::cout.rdbuf(oldCoutBuffer);
     EXPECT_EQ(capturedOutput.str(), readFileToString(expected_file_path));
+}
+
+
+TEST_F(TestClub, UserLeavingAtClosingTest) {
+    runTest(1);
+}
+
+TEST_F(TestClub, CorrectMoneyPerComputerTest) {
+    runTest(2);
+}
+
+TEST_F(TestClub, CorrectComputerChangeTest) {
+    runTest(3);
 }
 
 } // namespace test

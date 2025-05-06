@@ -89,6 +89,18 @@ void simulate(const std::filesystem::path& path) {
                     continue;
                 }
                 else { // correct comp_id, user takes place
+
+                    // if user change his comp, make prev comp available
+                    if (auto prev_comp_id = club.users[username]; prev_comp_id != -1) {
+                        Comp& comp = club.comps[prev_comp_id - 1];
+                        comp.available = true;
+                        club.available_comps++;
+        
+                        Time session_duration = event_time - comp.session_start;
+                        comp.total_time += session_duration;
+                        comp.total_money += calc_session_cost(session_duration, club.price);    
+                    }
+
                     club.comps[comp_id - 1].available = false;
                     club.comps[comp_id - 1].session_start = event_time;
                     club.available_comps--;
