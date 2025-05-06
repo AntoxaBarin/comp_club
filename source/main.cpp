@@ -9,5 +9,5 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
     comp_club::simulate(argv[1]);
-    
+    return 0;
 }

@@ -55,7 +55,12 @@ void simulate(const std::filesystem::path& path) {
             std::string username = "";
             
             ss >> event_time >> event_id >> username;
-            // todo: validate username 
+            
+            bool is_valid_username = validate_username(username);
+            if (!is_valid_username) {
+                std::cout << line << std::endl;
+                return;
+            }
             
             if (event_id == client_in_id) {
                 buffer << event_time << ' ' << event_id << ' ' << username << '\n';
@@ -155,6 +160,16 @@ int calc_session_cost(const Time& duration, int price) {
     }
     return (duration.hours() + 1) * price;
 }
+
+bool validate_username(std::string_view username) {
+    for (char c : username) {
+        if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= 'z') && c != '_' && c != '-') {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 // void Club::handle_client_in(const Time& event_time, std::stringstream& out_buffer) {
 

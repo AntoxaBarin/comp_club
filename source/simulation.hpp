@@ -5,6 +5,7 @@
 #include <optional>
 #include <map>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <sstream>
 
@@ -50,5 +51,6 @@ void simulate(const std::filesystem::path& path);
 
 int get_user_comp(const Club& club, const std::string& username);
 int calc_session_cost(const Time& duration, int price);
+bool validate_username(std::string_view username);
 
 } // namespace comp_club
