@@ -26,6 +26,8 @@ constexpr Id client_out_generated_id = 11;
 constexpr Id client_from_queue_start_id = 12;
 constexpr Id error_id = 13;
 
+constexpr Id invalid_comp_id = -1;
+
 struct Comp {
     int total_money = 0;
     Time total_time;
@@ -37,9 +39,10 @@ class Club {
 public:    
     Club() = default;
 
-    void acquire_computer(int comp_id, const std::string& username, const Time& time);
-    void release_computer(int comp_id, const Time& time);
-    // void handle_client_in(const Time& event_time, std::stringstream& out_buffer);
+    void acquire_computer(Id comp_id, const std::string& username, const Time& time);
+    void release_computer(Id comp_id, const Time& time);
+    bool add_user(const std::string& username);
+    bool is_valid_comp_id(Id comp_id) const;
 
     int comp_number;
     Time open;

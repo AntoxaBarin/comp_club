@@ -25,7 +25,6 @@ std::optional<Club> parse_club_info(std::ifstream& in) {
         std::cout << line << std::endl;
         return std::nullopt;
     }
-    
     return club;
 }
 
@@ -68,18 +67,18 @@ void simulate(const std::filesystem::path& path) {
                     buffer << event_time << ' ' << error_id << " NotOpenYet\n";
                     continue;
                 }
-                if (get_user_comp(club, username) != -1) {
+                bool user_added = club.add_user(username);
+                if (!user_added) {
                     buffer << event_time << ' ' << error_id << " YouShallNotPass\n";
                     continue;
                 }
-                club.users.insert({username, -1});
             }
             else if (event_id == client_start_id) {
                 int comp_id = 0;
                 ss >> comp_id;
                 buffer << event_time << ' ' << event_id << ' ' << username << ' ' << comp_id << '\n';
 
-                if (comp_id < 1 || comp_id > club.comp_number) { // incorrect comp_id
+                if (!club.is_valid_comp_id(comp_id)) {
                     std::cout << line << std::endl;
                     return;
                 }
@@ -87,10 +86,8 @@ void simulate(const std::filesystem::path& path) {
                     buffer << event_time << ' ' << error_id << " PlaceIsBusy\n";
                     continue;
                 }
-                else { // correct comp_id, user takes place
-
-                    // if user change his comp, make prev comp available
-                    if (auto prev_comp_id = club.users[username]; prev_comp_id != -1) {
+                else {
+                    if (auto prev_comp_id = club.users[username]; prev_comp_id != invalid_comp_id) {
                         club.release_computer(prev_comp_id, event_time);    
                     }
                     club.acquire_computer(comp_id, username, event_time);
@@ -115,7 +112,7 @@ void simulate(const std::filesystem::path& path) {
                 buffer << event_time << ' ' << event_id << ' ' << username << '\n';
                 
                 int comp_id = get_user_comp(club, username);
-                if (comp_id == -1) {
+                if (comp_id == invalid_comp_id) {
                     buffer << event_time << ' ' << error_id << " ClientUnknown\n";
                     continue;
                 }
@@ -159,7 +156,7 @@ int get_user_comp(const Club& club, const std::string& username) {
     if (it != club.users.end()) {
         return it->second;
     }
-    return -1;
+    return invalid_comp_id;
 }
 
 int calc_session_cost(const Time& duration, int price) {
@@ -194,6 +191,18 @@ void Club::acquire_computer(int comp_id, const std::string& username, const Time
     comp.session_start = time;
     available_comps--;
     users[username] = comp_id;
+}
+
+bool Club::add_user(const std::string& username) {
+    if (users.contains(username)) {
+        return false;
+    }
+    users.insert({username, invalid_comp_id});
+    return true;
+}
+
+bool Club::is_valid_comp_id(Id comp_id) const {
+    return comp_id >= 1 && comp_id <= comp_number;
 }
 
 } // namespace comp_club
