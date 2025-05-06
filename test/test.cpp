@@ -57,4 +57,12 @@ TEST_F(TestClub, TaskExampleInputTest) {
     runTest(5);
 }
 
+TEST_F(TestClub, PlaceIsBusyTest) {
+    runTest(6);
+}
+
+TEST_F(TestClub, OneMinuteUsersTest) {
+    runTest(7);
+}
+
 } // namespace test
