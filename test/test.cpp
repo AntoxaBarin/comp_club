@@ -49,4 +49,8 @@ TEST_F(TestClub, CorrectComputerChangeTest) {
     runTest(3);
 }
 
+TEST_F(TestClub, QueueTest) {
+    runTest(4);
+}
+
 } // namespace test

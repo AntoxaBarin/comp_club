@@ -74,7 +74,7 @@ void simulate(const std::filesystem::path& path) {
                     continue;
                 }
                 club.users.insert({username, -1});
-            } 
+            }
             else if (event_id == client_start_id) {
                 int comp_id = 0;
                 ss >> comp_id;
@@ -114,7 +114,13 @@ void simulate(const std::filesystem::path& path) {
                     buffer << event_time << ' ' << error_id << " ICanWaitNoLonger!\n";
                     continue;
                 }
-                // todo: add queue
+                if (club.waiting_users.size() >= static_cast<size_t>(club.comp_number)) {
+                    buffer << event_time << ' ' << client_out_generated_id <<  ' ' << username << '\n';
+                    club.users.erase(username);
+                    continue;
+                } else {
+                    club.waiting_users.emplace(username);
+                }
             }
             else if (event_id == client_out_id) {
                 buffer << event_time << ' ' << event_id << ' ' << username << '\n';
@@ -133,7 +139,15 @@ void simulate(const std::filesystem::path& path) {
                 comp.total_time += session_duration;
                 comp.total_money += calc_session_cost(session_duration, club.price);
                  
-                // todo: add client_start for user from queue head
+                if (!club.waiting_users.empty()) {
+                    auto next_username = club.waiting_users.front();
+                    club.waiting_users.pop();
+
+                    comp.available = false;
+                    comp.session_start = event_time;
+                    club.available_comps--;
+                    club.users[next_username] = comp_id;
+                }
             }
 
         } catch (...) {
@@ -181,10 +195,5 @@ bool validate_username(std::string_view username) {
     }
     return true;
 }
-
-
-// void Club::handle_client_in(const Time& event_time, std::stringstream& out_buffer) {
-
-// }
 
 } // namespace comp_club

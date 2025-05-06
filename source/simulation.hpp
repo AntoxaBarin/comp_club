@@ -8,6 +8,7 @@
 #include <string_view>
 #include <vector>
 #include <sstream>
+#include <queue>
 
 #include "time.hpp"
 
@@ -44,6 +45,7 @@ public:
     uint32_t available_comps;
     std::vector<Comp> comps;
     std::map<std::string, int> users;
+    std::queue<std::string> waiting_users;
 };
 
 std::optional<Club> parse_club_info(std::ifstream& in);
