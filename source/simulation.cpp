@@ -163,7 +163,7 @@ int calc_session_cost(const Time& duration, int price) {
 
 bool validate_username(std::string_view username) {
     for (char c : username) {
-        if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= 'z') && c != '_' && c != '-') {
+        if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && c != '_' && c != '-') {
             return false;
         }
     }
