@@ -65,4 +65,8 @@ TEST_F(TestClub, OneMinuteUsersTest) {
     runTest(7);
 }
 
+TEST_F(TestClub, YouShallNotPassTest) {
+    runTest(8);
+}
+
 } // namespace test

@@ -45,8 +45,8 @@ public:
     bool is_valid_comp_id(Id comp_id) const;
 
     int comp_number;
-    Time open;
-    Time close;
+    Time open_time;
+    Time close_time;
     uint32_t price;
     uint32_t available_comps;
     std::vector<Comp> comps;

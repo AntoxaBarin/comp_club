@@ -16,8 +16,7 @@ std::optional<Club> parse_club_info(std::ifstream& in) {
 
         std::getline(in, line);
         std::stringstream ss(line);
-        ss >> club.open;
-        ss >> club.close;
+        ss >> club.open_time >> club.close_time;
 
         std::getline(in, line);
         club.price = std::stoul(line);
@@ -43,7 +42,7 @@ void simulate(const std::filesystem::path& path) {
     club.comps.resize(club.comp_number, Comp{0, Time(), Time(), true});
 
     std::stringstream buffer;
-    buffer << club.open << '\n';
+    buffer << club.open_time << '\n';
 
     std::string line;
     while (std::getline(in, line)) {
@@ -63,7 +62,7 @@ void simulate(const std::filesystem::path& path) {
             if (event_id == client_in_id) {
                 buffer << event_time << ' ' << event_id << ' ' << username << '\n';
                 
-                if (event_time < club.open) {
+                if (event_time < club.open_time) {
                     buffer << event_time << ' ' << error_id << " NotOpenYet\n";
                     continue;
                 }
@@ -136,14 +135,14 @@ void simulate(const std::filesystem::path& path) {
     }
 
     for (auto [username, comp_id] : club.users) {
-        buffer << club.close << ' ' << client_out_generated_id << ' ' << username << '\n';
+        buffer << club.close_time << ' ' << client_out_generated_id << ' ' << username << '\n';
         Comp& comp = club.comps[comp_id - 1];
-        auto session_duration = club.close - comp.session_start;
+        auto session_duration = club.close_time - comp.session_start;
         comp.total_time += session_duration;
         comp.total_money += calc_session_cost(session_duration, club.price);
     }
 
-    buffer << club.close << '\n';
+    buffer << club.close_time << '\n';
     for (size_t i = 0; i < club.comps.size(); ++i) {
         buffer << i + 1 << ' ' << club.comps[i].total_money << ' ' << club.comps[i].total_time << '\n';
     }
