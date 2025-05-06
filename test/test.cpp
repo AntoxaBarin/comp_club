@@ -69,4 +69,12 @@ TEST_F(TestClub, YouShallNotPassTest) {
     runTest(8);
 }
 
+TEST_F(TestClub, NoEventsTest) {
+    runTest(9);
+}
+
+TEST_F(TestClub, ICanWaitNoLongerTest) {
+    runTest(10);
+}
+
 } // namespace test

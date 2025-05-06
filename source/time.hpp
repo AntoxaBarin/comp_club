@@ -12,7 +12,7 @@ class Time {
 public:
     Time(uint32_t hours = 0, uint32_t minutes = 0) {
         if (hours >= 24 || minutes >= 60) {
-            throw std::invalid_argument("Invalid time value");
+            throw std::invalid_argument("Invalid time value " + std::to_string(hours));
         }
         hours_ = hours;
         minutes_ = minutes;

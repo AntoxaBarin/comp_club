@@ -30,8 +30,8 @@ constexpr Id invalid_comp_id = -1;
 
 struct Comp {
     int total_money = 0;
-    Time total_time;
-    Time session_start;
+    Time total_time = Time(0, 0);
+    Time session_start = Time(0, 0);
     bool available = true;
 };
 

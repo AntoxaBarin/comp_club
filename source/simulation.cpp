@@ -136,10 +136,12 @@ void simulate(const std::filesystem::path& path) {
 
     for (auto [username, comp_id] : club.users) {
         buffer << club.close_time << ' ' << client_out_generated_id << ' ' << username << '\n';
-        Comp& comp = club.comps[comp_id - 1];
-        auto session_duration = club.close_time - comp.session_start;
-        comp.total_time += session_duration;
-        comp.total_money += calc_session_cost(session_duration, club.price);
+        if (comp_id != invalid_comp_id) {
+            Comp& comp = club.comps[comp_id - 1];
+            auto session_duration = club.close_time - comp.session_start;
+            comp.total_time += session_duration;
+            comp.total_money += calc_session_cost(session_duration, club.price);
+        }
     }
 
     buffer << club.close_time << '\n';
